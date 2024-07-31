@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Drum from "./Drum";
 
 type AudioClip = {
@@ -55,6 +56,15 @@ const audioClips: AudioClip[] = [
 ];
 
 function App() {
+  const [display, setDisplay] = useState("");
+
+  useEffect(() => {
+    const drumMachine = document.getElementById("drum-Q");
+    drumMachine?.focus();
+
+    setDisplay("Heater 1");
+  }, []);
+
   function playAudio(e: React.KeyboardEvent<HTMLDivElement>) {
     const clip = audioClips.find(
       (clip) => clip.keyTrigger === e.key.toUpperCase()
@@ -68,20 +78,25 @@ function App() {
       ?.play()
       .catch(console.error);
 
+    setDisplay(clip.description);
     document.getElementById("drum-" + clip.keyTrigger)?.focus();
   }
 
   return (
     <div className="container" id="drum-machine" onKeyDown={playAudio}>
       <h1>Drum Machine</h1>
-      <div className="whole-drum">
+      <div id="whole-drum" className="whole-drum">
         {audioClips.map((clip) => (
           <>
-            <Drum key={clip.keyTrigger} audioClip={clip} />
+            <Drum
+              key={clip.keyTrigger}
+              audioClip={clip}
+              updateDisplay={setDisplay}
+            />
           </>
         ))}
       </div>
-      <div id="display"></div>
+      <div id="display">{display}</div>
     </div>
   );
 }
